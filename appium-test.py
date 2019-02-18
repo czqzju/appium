@@ -50,20 +50,14 @@ class Xuexi(unittest.TestCase):
         y = size['height']
         self.driver.swipe(x * 0.5, y * 0.34, x * 0.5, y * 0.25, 200)
         done = False
-        while(news_score < 14):
+        while(news_score < 6):
             newsList = self.driver.find_elements_by_xpath("//android.widget.ListView/android.widget.FrameLayout")
             for new in newsList:
                 new.click()
                 cnt += 1
-                time.sleep(250)
-                # self.driver.find_element_by_xpath("//android.widget.TextView[contains(@text, '欢迎发表你的观点')]").click()
-                # time.sleep(1)
-                # self.driver.find_element_by_xpath("//android.widget.EditText[contains(@text, '好观点将会被优先展示')]").send_keys(self.comments[random.randrange(0, len(self.comments))])
-                # time.sleep(1)
-                # self.driver.find_element_by_xpath("//android.widget.TextView[contains(@text, '发布')]").click()
-                # time.sleep(1)
+                time.sleep(10)
                 self.driver.press_keycode(4) #press back button
-                time.sleep(1)
+                time.sleep(2)
                 news_score += int(self.scoreElement.text) - self.score
                 self.score = int(self.scoreElement.text)
                 if(cnt > 50):
@@ -108,44 +102,42 @@ class Xuexi(unittest.TestCase):
             cnt += 1
         print("今日已完成%d条评论"%(cnt))
 
-    def test_vedio(self):
+    def test_video(self):
         cnt = 0
         new_score = 0
         time.sleep(5)
-        self.scoreElement = self.driver.find_element_by_id("news_xuexi_score")
+
+        self.driver.find_element_by_id("home_bottom_tab_button_contact").click()
+        time.sleep(1)
+
+        self.scoreElement = self.driver.find_element_by_id("video_xuexi_score")
         time.sleep(1)
         self.score = int(self.scoreElement.text)
-        self.driver.find_element_by_id("home_bottom_tab_button_contact").click()
 
         size = self.driver.get_window_size()
         x = size['width']
         y = size['height']
-        while(new_score < 14):
+
+        while (new_score < 6):
             vedioList = self.driver.find_elements_by_xpath("//android.widget.ListView/android.widget.FrameLayout")
-            time.sleep(1)
             for vedio in vedioList:
-                vedio.click()
-                time.sleep(1)
-                vedio.click()
-                time.sleep(1)
-                while(True):
-                    try:
-                        self.driver.find_element_by_xpath("//android.widget.TextView[contains(@text, '重新播放')]")
-                        break
-                    except :
-                        pass
-                    time.sleep(5)
-                self.driver.press_keycode(4) #press back button
-                # time.sleep(1)
-                # self.scoreElement = self.driver.find_element_by_id("news_xuexi_score")
-                # time.sleep(1)
-                new_score += self.score - int(self.scoreElement.text)
+                # print(vedio.rect)
+                xf = vedio.rect.get('x')
+                yf = vedio.rect.get('y')
+                height = vedio.rect.get('height')
+                # print(x, height, y)
+                self.driver.tap([(xf + 1, yf + height - 1)], 100)
+                time.sleep(10)
+                self.driver.press_keycode(4)
+                time.sleep(2)
+                new_score += int(self.scoreElement.text) - self.score
                 self.score = int(self.scoreElement.text)
-                print(new_score, self.score)
-                if(new_score >= 14):
+                # print(new_score, self.score)
+                if (new_score >= 6):
                     break
             self.driver.swipe(x * 0.5, y * 0.5, x * 0.5, y * 0.25, 200)
             time.sleep(1)
+
         print("今日观看视频已经获得%d分"%new_score)
 
 
@@ -165,8 +157,7 @@ class Xuexi(unittest.TestCase):
         x = size['width']
         y = size['height']
 
-
-        while(new_score < 10):
+        while(new_score < 6):
             vedioList = self.driver.find_elements_by_xpath("//android.widget.ListView/android.widget.FrameLayout")
             for vedio in vedioList:
                 tmp = vedio.find_elements_by_xpath("/android.widget.TextView")
@@ -177,34 +168,28 @@ class Xuexi(unittest.TestCase):
                     height = vedio.rect.get('height')
                     # print(x, height, y)
                     self.driver.tap([(xf + 1, yf + height - 1)], 100)
-                    while (True):
-                        try:
-                            self.driver.find_element_by_xpath("//android.widget.TextView[contains(@text, '重新播放')]")
-                            break
-                        except:
-                            pass
-                        time.sleep(5)
+                    time.sleep(10)
                     self.driver.press_keycode(4)
                     time.sleep(2)
                     # self.scoreElement = self.driver.find_element_by_id("news_xuexi_score")
                     new_score += self.score - int(self.scoreElement.text)
                     self.score = int(self.scoreElement.text)
                     print(new_score, self.score)
-                    if (new_score >= 10):
+                    if (new_score >= 6):
                         break
-                else:
-                    continue
-
-
             self.driver.swipe(x * 0.5, y * 0.5, x * 0.5, y * 0.25, 200)
             time.sleep(1)
+        print("今日观看视频已获得%d分")
 
 
 
 if __name__ == '__main__':
     # 构造测试集
     suite = unittest.TestSuite()
-    suite.addTest(Xuexi("test_demo"))
+    # suite.addTest(Xuexi("test_news"))
+    # suite.addTest(Xuexi("test_comment"))
+    # suite.addTest(Xuexi("test_video"))
+    suite.addTest(Xuexi("test_video"))
     # 执行测试
     runner = unittest.TextTestRunner()
     runner.run(suite)
