@@ -24,76 +24,84 @@ class Xuexi(unittest.TestCase):
                          "承载了中华儿女无数的光荣与梦想；向着明天，让我们用双手创造更多的辉煌",
                          "中国，正以龙的姿态腾飞，愿您越飞越高，与日月同辉，像恒星一样永存，像星星一样闪亮"]
 
+    def test_debug(self):
+        self.driver.wait_activity("com.alibaba.android.rimet.biz.home.activity.HomeActivity", 30)#主页
+        self.driver.find_element_by_id("home_bottom_tab_button_mine").click()
+        print(self.driver.current_activity)
+        items = self.driver.find_elements_by_xpath("//android.view.View")
+        items[6].click()
+        self.driver.wait_activity("com.alibaba.lightapp.runtime.activity.CommonWebViewActivity", 30)#内嵌页面
+        print(self.driver.current_activity)
     #type
-    def getRestScore(self, type = 3):
-        # try:
-            time.sleep(5)
-            self.driver.find_element_by_id("home_bottom_tab_button_mine").click()
-            time.sleep(2)
-            items = self.driver.find_elements_by_xpath("//android.view.View")
-            time.sleep(1)
-            items[6].click()
-            time.sleep(2)
-            tasks = self.driver.find_elements_by_xpath("//android.widget.ListView/android.view.View/android.view.View/android.view.View")
-            time.sleep(5)
-            print(tasks[type * 3 - 1].text)
-            scores = re.findall(r'\d+', tasks[type * 3 - 1].text)
-            self.driver.press_keycode(4)
-            time.sleep(1)
-            return int(scores[1]) - int(scores[0])
+    # def getRestScore(self, type = 3):
+    #     # try:
+    #         self.driver.wait_activity("com.alibaba.android.rimet.biz.home.activity.HomeActivity", 30)
+    #         self.driver.find_element_by_id("home_bottom_tab_button_mine").click()
+    #         time.sleep(2)
+    #         items = self.driver.find_elements_by_xpath("//android.view.View")
+    #         time.sleep(1)
+    #         items[6].click()
+    #         time.sleep(5)
+    #         tasks = self.driver.find_elements_by_xpath("//android.widget.ListView/android.view.View/android.view.View/android.view.View")
+    #         time.sleep(5)
+    #         print(tasks[type * 3 - 1].text)
+    #         scores = re.findall(r'\d+', tasks[type * 3 - 1].text)
+    #         self.driver.press_keycode(4)
+    #         time.sleep(1)
+    #         return int(scores[1]) - int(scores[0])
         # except:
         #     return 0
-
-
-
-    def tearDown(self):
-        self.driver.quit()
-
-    def test_news(self):
-        try:
-            cnt = 0
-            time.sleep(5)
-            self.scoreElement = self.driver.find_element_by_id("news_xuexi_score")
-            self.score = int(self.scoreElement.text)
-            news_score = 0
-            limitedScoreDaily = self.getRestScore(2)
-            if(limitedScoreDaily == 0):
-                print("今天阅读文章已经满分")
-                return
-            self.driver.find_element_by_id("home_bottom_tab_button_work").click()
-            time.sleep(1)
-            self.driver.find_elements_by_xpath("//android.widget.ImageView")[2].click()
-            time.sleep(1)
-            self.driver.find_element_by_xpath("//android.widget.TextView[contains(@text, '订阅')]").click()
-            time.sleep(1)
-            size = self.driver.get_window_size()
-            x = size['width']
-            y = size['height']
-            self.driver.swipe(x * 0.5, y * 0.34, x * 0.5, y * 0.25, 200)
-            done = False
-            while(news_score < limitedScoreDaily):
-                newsList = self.driver.find_elements_by_xpath("//android.widget.ListView/android.widget.FrameLayout")
-                for new in newsList:
-                    new.click()
-                    cnt += 1
-                    time.sleep(10)
-                    self.driver.press_keycode(4) #press back button
-                    time.sleep(2)
-                    news_score += int(self.scoreElement.text) - self.score
-                    self.score = int(self.scoreElement.text)
-                    if(news_score >= limitedScoreDaily):
-                        done = True
-                        break
-                if(done == True):
-                    break
-                time.sleep(1)
-                self.driver.swipe(x*0.5, y*0.6, x*0.5, y*0.25, 200)
-                time.sleep(2)
-
-            print("阅读文章已获得%d分"%(news_score))
-        except:
-            print("阅读文章有异常，可以试试再跑一次或者手动完成")
-
+    #
+    #
+    #
+    # def tearDown(self):
+    #     self.driver.quit()
+    #
+    # def test_news(self):
+    #     try:
+    #         cnt = 0
+    #         time.sleep(5)
+    #         self.scoreElement = self.driver.find_element_by_id("news_xuexi_score")
+    #         self.score = int(self.scoreElement.text)
+    #         news_score = 0
+    #         limitedScoreDaily = self.getRestScore(2)
+    #         if(limitedScoreDaily == 0):
+    #             print("今天阅读文章已经满分")
+    #             return
+    #         self.driver.find_element_by_id("home_bottom_tab_button_work").click()
+    #         time.sleep(1)
+    #         self.driver.find_elements_by_xpath("//android.widget.ImageView")[2].click()
+    #         time.sleep(1)
+    #         self.driver.find_element_by_xpath("//android.widget.TextView[contains(@text, '订阅')]").click()
+    #         time.sleep(1)
+    #         size = self.driver.get_window_size()
+    #         x = size['width']
+    #         y = size['height']
+    #         self.driver.swipe(x * 0.5, y * 0.34, x * 0.5, y * 0.25, 200)
+    #         done = False
+    #         while(news_score < limitedScoreDaily):
+    #             newsList = self.driver.find_elements_by_xpath("//android.widget.ListView/android.widget.FrameLayout")
+    #             for new in newsList:
+    #                 new.click()
+    #                 cnt += 1
+    #                 time.sleep(10)
+    #                 self.driver.press_keycode(4) #press back button
+    #                 time.sleep(2)
+    #                 news_score += int(self.scoreElement.text) - self.score
+    #                 self.score = int(self.scoreElement.text)
+    #                 if(news_score >= limitedScoreDaily):
+    #                     done = True
+    #                     break
+    #             if(done == True):
+    #                 break
+    #             time.sleep(1)
+    #             self.driver.swipe(x*0.5, y*0.6, x*0.5, y*0.25, 200)
+    #             time.sleep(2)
+    #
+    #         print("阅读文章已获得%d分"%(news_score))
+    #     except:
+    #         print("阅读文章有异常，可以试试再跑一次或者手动完成")
+    #
     # def test_video(self):
     #     try:
     #         new_score = 0
@@ -137,7 +145,7 @@ class Xuexi(unittest.TestCase):
     #         print("今日观看视频已经获得%d分"%new_score)
     #     except:
     #         print("今日观有异常，可以试试再跑一次或者手动完成")
-
+    #
     # def test_comment(self):
     #     limitedScoreDaily = self.getRestScore(12)
     #     if(limitedScoreDaily == 0):
@@ -292,7 +300,7 @@ class Xuexi(unittest.TestCase):
     #         print("今日已经分享%d次"%cnt)
     #     except:
     #         print("今日分享有异常，可以试试再跑一次或者手动完成")
-
+    #
     # def test_collect(self):
     #     added_score = 0
     #     limitedScoreDaily = self.getRestScore(10)
@@ -392,7 +400,7 @@ class Xuexi(unittest.TestCase):
 if __name__ == '__main__':
     # 构造测试集
     suite = unittest.TestSuite()
-    suite.addTest(Xuexi("test_news"))
+    # suite.addTest(Xuexi("test_news"))
     # suite.addTest(Xuexi("test_video"))
     # suite.addTest(Xuexi("test_comment"))
     # suite.addTest(Xuexi("test_LeijiNews"))
@@ -400,7 +408,7 @@ if __name__ == '__main__':
     # suite.addTest(Xuexi("test_share"))
     # suite.addTest(Xuexi("test_collect"))
     # suite.addTest(Xuexi("test_answer"))
-    # suite.addTest(Xuexi("test_getRestScore"))
+    suite.addTest(Xuexi("test_debug"))
 
 
 
